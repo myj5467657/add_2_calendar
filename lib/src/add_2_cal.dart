@@ -12,4 +12,10 @@ class Add2Calendar {
         .invokeMethod<bool?>('add2Cal', event.toJson())
         .then((value) => value ?? false);
   }
+
+  static Future<bool> updateEvent2Cal(int eventId) async{
+    return _channel
+        .invokeMethod<bool?>('update2Cal', {'eventId':eventId})
+        .then((value) => value ?? false);
+  }
 }
