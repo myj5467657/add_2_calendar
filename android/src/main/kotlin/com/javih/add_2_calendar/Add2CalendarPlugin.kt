@@ -2,8 +2,10 @@ package com.javih.add_2_calendar
 
 import android.app.Activity
 import android.content.Context
+import android.content.ContentUris
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.provider.CalendarContract
 import androidx.annotation.NonNull
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -48,7 +50,9 @@ class Add2CalendarPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
               call.argument("invites") as String?
           )
           result.success(success)
-
+      }else if(call.method == "update2Cal") {
+            val success = update(call.argument("eventId")!!)
+            result.success(success)
       } else {
           result.notImplemented()
       }
@@ -123,6 +127,19 @@ class Add2CalendarPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
         return false;
     }
 
+    private fun update(eventId: Long): Boolean{
+        val mContext: Context = if (activity != null) activity!!.applicationContext else context!!
+        val uri: Uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId)
+        val intent = Intent(Intent.ACTION_EDIT)
+                .setData(uri)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+        if(intent.resolveActivity(mContext.packageManager)!= null){
+            mContext.startActivity(intent)
+            return true
+        }
+        return false;
+    }
 
     private fun buildRRule(recurrence: HashMap<String, Any>): String? {
 
